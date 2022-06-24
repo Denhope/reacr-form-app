@@ -1,0 +1,38 @@
+@import "../utils/constants.module.scss";
+@import "../utils/mixins.module.scss";
+@import '~antd/dist/antd.css';
+
+
+.Wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.Form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 1rem
+}
+
+.Textarea {
+	@include font (1.5rem, $hight: 1.5, $wight: 400);
+	resize: vertical;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	position: relative;
+	background-color: transparent;
+	resize: none;
+
+	@include media-mobile {
+		width: 30rem;
+		padding: 1rem;
+	}
+}
+
+.input {
+	background-color: transparent;
+}
