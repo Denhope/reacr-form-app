@@ -1,0 +1,23 @@
+@mixin font($size, $hight, $wight: 400, $style: normal, $color: $color-dark-l) {
+  font-size: $size;
+  font-style: $style;
+  font-weight: $wight;
+  line-height: $hight;
+  color: $color;
+}
+
+@mixin columns($width) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  >* {
+    flex-basis: $width;
+  }
+}
+
+@mixin media-mobile {
+  @media (max-width: $mobile-big-width) {
+    @content;
+  }
+}

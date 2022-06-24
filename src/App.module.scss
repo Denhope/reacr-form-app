@@ -1,0 +1,18 @@
+@import './utils/mixins.module.scss';
+@import './utils/constants.module.scss';
+
+.AppWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  max-width: $content-width;
+  margin: auto;
+  padding: 0 20px;
+
+  @include media-mobile {
+    max-width: $mobile-big-width;
+    padding: 0 10px;
+    gap: 2rem;
+  }
+
+}
