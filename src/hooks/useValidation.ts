@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export const useValidation = (value: string, validations: any) => {
+export const useValidation = (value: any, validations: any) => {
   const [isEmpty, setEmpty] = useState<boolean>(true);
   const [minLengthError, setMinLengthError] = useState<boolean>(false);
   const [maxLengthError, setMaxLengthError] = useState<boolean>(false);
-  const [valueTypeError, setValueTypeError] = useState<boolean>(false);
+  const [isNameTypeError, setNameTypeError] = useState<boolean>(false);
   const [isEmailTypeError, setEmailTypeError] = useState<boolean>(false);
   const [isTelTypeError, setTelTypeError] = useState<boolean>(false);
   const [inputValid, setInputValidError] = useState<boolean>(false);
@@ -29,8 +29,8 @@ export const useValidation = (value: string, validations: any) => {
         case 'isName':
           const resName = /^([a-zA-Z]{3,})+\s{1}([a-zA-Z]{3,})+$/i;
           resName.test(String(value).toLocaleLowerCase())
-            ? setValueTypeError(false)
-            : setValueTypeError(true);
+            ? setNameTypeError(false)
+            : setNameTypeError(true);
           break;
         case 'isEmailType':
           const resEmail = /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/i;
@@ -53,7 +53,7 @@ export const useValidation = (value: string, validations: any) => {
       isEmpty ||
       maxLengthError ||
       minLengthError ||
-      valueTypeError ||
+      isNameTypeError ||
       isEmailTypeError ||
       isTelTypeError
     ) {
@@ -61,13 +61,13 @@ export const useValidation = (value: string, validations: any) => {
     } else {
       setInputValidError(true);
     }
-  }, [isEmpty, minLengthError, maxLengthError, valueTypeError, isEmailTypeError, isTelTypeError]);
+  }, [isEmpty, minLengthError, maxLengthError, isNameTypeError, isEmailTypeError, isTelTypeError]);
 
   return {
     isEmpty,
     minLengthError,
     maxLengthError,
-    valueTypeError,
+    isNameTypeError,
     isEmailTypeError,
     isTelTypeError,
     inputValid,

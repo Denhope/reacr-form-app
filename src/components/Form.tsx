@@ -1,9 +1,27 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import s from './Form.module.scss';
-import { Button, DatePicker, Form, Input } from 'antd';
+import { Button, DatePicker, Form, Input, Row } from 'antd';
 import { useInput } from '../hooks/useInput';
+import { Moment } from 'moment';
+import { formatDate } from '../utils/date';
+import { IEvent } from '../models/IEvent';
+import { InitialFormState } from '../types/form';
 
-export const FormItem: FC = () => {
+export interface EventFormProps {
+  // onSubmit: (event: IEvent) => void;
+}
+
+const IFormItemState: InitialFormState = {
+  author: '',
+  email: '',
+  telNomber: '',
+  date: '',
+  message: '',
+};
+
+export const FormItem: FC<EventFormProps> = (props) => {
+  const [event, setEvent] = useState<IEvent>(IFormItemState);
+
   const name = useInput('', {
     isEmpty: true,
     minLength: 7,
@@ -14,15 +32,29 @@ export const FormItem: FC = () => {
   const tel = useInput('', { isEmpty: true, minLength: 10, isTelType: true });
   const textArea = useInput('', { isEmpty: true, minLength: 10, maxLength: 300 });
   const bithDate = useInput('', { isEmpty: true });
+  const dateFormat = 'YYYY.MM.DD';
+
+  const selectData = (date: Moment | null) => {
+    if (date) {
+      setEvent({ ...event, date: formatDate(date.toDate()) });
+    }
+  };
+
+  const submitForm = () => {
+    console.log(event);
+  };
 
   return (
     <div className={s.Wrapper}>
       <h1>Форма обратной связи</h1>
-      <Form>
+      <Form onFinish={submitForm}>
         <Form.Item label="Имя Фамилия" name="username">
           <Input
             type="text"
-            onChange={name.onChange}
+            onChange={(e) => {
+              name.onChange(e);
+              setEvent({ ...event, author: e.target.value });
+            }}
             onBlur={name.onBlur}
             value={name.value}
             placeholder="Введите Имя и Фамилию"
@@ -36,15 +68,17 @@ export const FormItem: FC = () => {
           {name.isDirty && name.minLengthError && !name.isEmpty && (
             <div style={{ color: 'red' }}>Слишком коротко</div>
           )}
-          {name.isDirty && name.valueTypeError && !name.isEmpty && (
+          {name.isDirty && name.isNameTypeError && !name.isEmpty && (
             <div style={{ color: 'red' }}>Некоретный ввод</div>
           )}
         </Form.Item>
-        <Form.Item label="Email">
+        <Form.Item label="Email" name="email">
           <Input
-            name="email"
             type="email"
-            onChange={email.onChange}
+            onChange={(e) => {
+              email.onChange(e);
+              setEvent({ ...event, email: e.target.value });
+            }}
             onBlur={email.onBlur}
             value={email.value}
             placeholder="Введите email"
@@ -58,7 +92,10 @@ export const FormItem: FC = () => {
         </Form.Item>
         <Form.Item name="phone" label="Номер телефона">
           <Input
-            onChange={tel.onChange}
+            onChange={(e) => {
+              tel.onChange(e);
+              setEvent({ ...event, telNomber: e.target.value });
+            }}
             onBlur={tel.onBlur}
             value={tel.value}
             addonBefore="+7"
@@ -71,8 +108,14 @@ export const FormItem: FC = () => {
             <div style={{ color: 'red' }}>Некоретный номер, введите 10 цифр</div>
           )}
         </Form.Item>
-        <Form.Item label="Дата Рождения" style={{ width: '100%' }}>
-          <DatePicker />
+        <Form.Item label="Дата Рождения" name="bithdate" style={{ width: '100%' }}>
+          <DatePicker
+            onChange={(date) => {
+              selectData(date);
+            }}
+            format={dateFormat}
+            placeholder="Выберите дату"
+          />
 
           {bithDate.isDirty && bithDate.isEmpty && (
             <div style={{ color: 'red' }}>Поле не может быть пустым</div>
@@ -81,7 +124,10 @@ export const FormItem: FC = () => {
         <Form.Item name="message" label="Сообщение">
           <Input.TextArea
             className={s.Textarea}
-            onChange={textArea.onChange}
+            onChange={(e) => {
+              textArea.onChange(e);
+              setEvent({ ...event, message: e.target.value });
+            }}
             onBlur={textArea.onBlur}
             value={textArea.value}
             cols={25}
@@ -98,15 +144,19 @@ export const FormItem: FC = () => {
             <div style={{ color: 'red' }}>Сообщение слишком длинное</div>
           )}
         </Form.Item>
-        <Button
-          disabled={
-            !email.inputValid || !tel.inputValid || !textArea.inputValid || !bithDate.inputValid
-          }
-          type="primary"
-          htmlType="submit"
-        >
-          Отправить
-        </Button>
+        <Row justify="end">
+          <Form.Item>
+            <Button
+              disabled={
+                !name.inputValid || !email.inputValid || !tel.inputValid || !textArea.inputValid
+              }
+              type="primary"
+              htmlType="submit"
+            >
+              Отправить
+            </Button>
+          </Form.Item>
+        </Row>
       </Form>
     </div>
   );
