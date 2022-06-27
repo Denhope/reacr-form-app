@@ -14,14 +14,18 @@ export interface EventFormProps {
 const IFormItemState: InitialFormState = {
   author: '',
   email: '',
-  telNomber: '',
+  telNumber: '',
   date: '',
   message: '',
 };
 
-export const FormItem: FC<EventFormProps> = (props) => {
+export const FormItem: FC<EventFormProps> = () => {
+  const [result, setResult] = useState({
+    message: '',
+    success: false,
+    error: null,
+  });
   const [event, setEvent] = useState<IEvent>(IFormItemState);
-
   const name = useInput('', {
     isEmpty: true,
     minLength: 7,
@@ -34,6 +38,35 @@ export const FormItem: FC<EventFormProps> = (props) => {
   const bithDate = useInput('', { isEmpty: true });
   const dateFormat = 'YYYY.MM.DD';
 
+  async function onSubmit(values: IEvent) {
+    console.log(values);
+    try {
+      const response = await fetch('http://localhost:5000/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        setResult({
+          message: 'Данные отправлены',
+          success: true,
+          error: null,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      setResult({
+        message: `Данные не отправлены, произошла ошибка, статус ошибки - ${err.message}`,
+        success: false,
+        error: err.message,
+      });
+    }
+  }
+
   const selectData = (date: Moment | null) => {
     if (date) {
       setEvent({ ...event, date: formatDate(date.toDate()) });
@@ -41,7 +74,8 @@ export const FormItem: FC<EventFormProps> = (props) => {
   };
 
   const submitForm = () => {
-    console.log(event);
+    onSubmit(event);
+    console.log(result);
   };
 
   return (
@@ -66,7 +100,7 @@ export const FormItem: FC<EventFormProps> = (props) => {
             <div style={{ color: 'red' }}>Слишкои длинное Имя</div>
           )}
           {name.isDirty && name.minLengthError && !name.isEmpty && (
-            <div style={{ color: 'red' }}>Слишком коротко</div>
+            <div style={{ color: 'red' }}>Слишком короткое имя</div>
           )}
           {name.isDirty && name.isNameTypeError && !name.isEmpty && (
             <div style={{ color: 'red' }}>Некоретный ввод</div>
@@ -94,7 +128,7 @@ export const FormItem: FC<EventFormProps> = (props) => {
           <Input
             onChange={(e) => {
               tel.onChange(e);
-              setEvent({ ...event, telNomber: e.target.value });
+              setEvent({ ...event, telNumber: e.target.value });
             }}
             onBlur={tel.onBlur}
             value={tel.value}
@@ -148,7 +182,8 @@ export const FormItem: FC<EventFormProps> = (props) => {
           <Form.Item>
             <Button
               disabled={
-                !name.inputValid || !email.inputValid || !tel.inputValid || !textArea.inputValid
+                !name.inputValid
+                // !name.inputValid || !email.inputValid || !tel.inputValid || !textArea.inputValid
               }
               type="primary"
               htmlType="submit"
@@ -157,6 +192,12 @@ export const FormItem: FC<EventFormProps> = (props) => {
             </Button>
           </Form.Item>
         </Row>
+
+        {result.success ? (
+          <div style={{ color: 'red' }}>{result.message}</div>
+        ) : (
+          <div style={{ color: 'red' }}>{result.message}</div>
+        )}
       </Form>
     </div>
   );

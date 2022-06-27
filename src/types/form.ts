@@ -1,7 +1,7 @@
 export interface InitialFormState {
   author: string;
   email: string;
-  telNomber: string;
+  telNumber: string;
   date: string;
   message: string;
 }

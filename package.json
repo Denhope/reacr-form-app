@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Denhope/react-note-app.git"
+    "url": "git+https://https://github.com/Denhope/react-form-app"
   },
   "keywords": [],
   "author": "Dzianis Kavalchuk",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Denhope/react-note-app/issues"
+    "url": "https://github.com/Denhope/react-form-app/issues"
   },
-  "homepage": "https://github.com/Denhope/react-note-app#readme",
+  "homepage": "https://github.com/Denhope/react-form-app#readme",
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
