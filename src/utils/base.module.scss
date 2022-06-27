@@ -3,29 +3,28 @@
 @import "./placeholders.module.scss";
 
 html {
-    font-size: 10px;
-    scroll-behavior: smooth;
+  font-size: 10px;
+  scroll-behavior: smooth;
 }
 
 body {
-    font-size: 1.6rem;
-    // @extend %font;
-    @extend %transition;
-    background-color: $color-whithe
+  font-size: 1.6rem;
+  // @extend %font;
+  @extend %transition;
+  background-color: $color-whithe
 }
 
 .body_lock {
-    overflow: hidden;
+  overflow: hidden;
 }
 
-
 p {
-    @include font(1.5rem, 160%, $color: $black);
-    @extend %font-primery;
-    letter-spacing: 0.06em;
-    margin: 0;
+  @include font(1.5rem, 160%, $color: $black);
+  @extend %font-primery;
+  letter-spacing: 0.06em;
+  margin: 0;
 }
 
 span {
-    display: block;
+  display: block;
 }
