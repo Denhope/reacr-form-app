@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import s from './Form.module.scss';
 import { Button, DatePicker, Form, Input, Row } from 'antd';
 import { useInput } from '../hooks/useInput';
@@ -25,6 +25,7 @@ export const FormItem: FC<EventFormProps> = () => {
     success: false,
     error: null,
   });
+
   const [event, setEvent] = useState<IEvent>(IFormItemState);
   const name = useInput('', {
     isEmpty: true,
@@ -37,9 +38,9 @@ export const FormItem: FC<EventFormProps> = () => {
   const textArea = useInput('', { isEmpty: true, minLength: 10, maxLength: 300 });
   const bithDate = useInput('', { isEmpty: true });
   const dateFormat = 'YYYY.MM.DD';
+  const [form] = Form.useForm();
 
   async function onSubmit(values: IEvent) {
-    console.log(values);
     try {
       const response = await fetch('http://localhost:5000/profile', {
         method: 'POST',
@@ -56,6 +57,15 @@ export const FormItem: FC<EventFormProps> = () => {
           success: true,
           error: null,
         });
+        setTimeout(() => {
+          setResult({
+            message: '',
+            success: false,
+            error: null,
+          });
+          window.location.reload();
+          form.resetFields();
+        }, 1000);
       }
     } catch (err) {
       console.log(err);
@@ -75,13 +85,12 @@ export const FormItem: FC<EventFormProps> = () => {
 
   const submitForm = () => {
     onSubmit(event);
-    console.log(result);
   };
 
   return (
     <div className={s.Wrapper}>
       <h1>Форма обратной связи</h1>
-      <Form onFinish={submitForm}>
+      <Form form={form} className={s.Form} onFinish={submitForm}>
         <Form.Item label="Имя Фамилия" name="username">
           <Input
             type="text"
@@ -90,7 +99,7 @@ export const FormItem: FC<EventFormProps> = () => {
               setEvent({ ...event, author: e.target.value });
             }}
             onBlur={name.onBlur}
-            value={name.value}
+            value={name.value.toUpperCase()}
             placeholder="Введите Имя и Фамилию"
           />
           {name.isDirty && name.isEmpty && (
@@ -99,11 +108,10 @@ export const FormItem: FC<EventFormProps> = () => {
           {name.isDirty && name.maxLengthError && (
             <div style={{ color: 'red' }}>Слишкои длинное Имя</div>
           )}
-          {name.isDirty && name.minLengthError && !name.isEmpty && (
-            <div style={{ color: 'red' }}>Слишком короткое имя</div>
-          )}
           {name.isDirty && name.isNameTypeError && !name.isEmpty && (
-            <div style={{ color: 'red' }}>Некоретный ввод</div>
+            <div style={{ color: 'red', maxWidth: '100%' }}>
+              Введите имя и фамилию через пробел латинскими буквами, длина слов не мение 3 символов{' '}
+            </div>
           )}
         </Form.Item>
         <Form.Item label="Email" name="email">
@@ -172,7 +180,9 @@ export const FormItem: FC<EventFormProps> = () => {
             <div style={{ color: 'red' }}>Поле не может быть пустым</div>
           )}
           {textArea.isDirty && !textArea.isEmpty && textArea.minLengthError && (
-            <div style={{ color: 'red' }}>Сообщение слишком короткое</div>
+            <div style={{ color: 'red' }}>
+              Сообщение слишком короткое, минимальная длина сообщения 10 символов
+            </div>
           )}
           {textArea.isDirty && !textArea.isEmpty && textArea.maxLengthError && (
             <div style={{ color: 'red' }}>Сообщение слишком длинное</div>
@@ -182,8 +192,11 @@ export const FormItem: FC<EventFormProps> = () => {
           <Form.Item>
             <Button
               disabled={
-                !name.inputValid
-                // !name.inputValid || !email.inputValid || !tel.inputValid || !textArea.inputValid
+                !name.inputValid ||
+                result.success ||
+                !email.inputValid ||
+                !tel.inputValid ||
+                !textArea.inputValid
               }
               type="primary"
               htmlType="submit"
@@ -194,9 +207,9 @@ export const FormItem: FC<EventFormProps> = () => {
         </Row>
 
         {result.success ? (
-          <div style={{ color: 'red' }}>{result.message}</div>
+          <div className={s.MessageSuccess}>{result.message}</div>
         ) : (
-          <div style={{ color: 'red' }}>{result.message}</div>
+          <div className={s.MessageError}>{result.message}</div>
         )}
       </Form>
     </div>
